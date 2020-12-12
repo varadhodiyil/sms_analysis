@@ -229,15 +229,15 @@ def generating_analytical(pd_day_text, pd_master, date,initial_time, initial_tim
     sentiment=str(sentiment)
     
     pd_master=pd_master.append({'Date':date, 'Start Time': initial_time, 'End Time':end_time, 'Text sent by Me':send_by_me,
-     'Text Sent by partner':send_by_him, 'raw ratio': raw_ratio, 'adjusted text ratio': adjusted_ratio,
-     'word count by me': average_outgoing_length, 'word count by partner':average_incoming_length,
+     'Text Sent by {0}'.format(partner):send_by_him, 'raw ratio': raw_ratio, 'adjusted text ratio': adjusted_ratio,
+     'word count by me': average_outgoing_length, 'word count by {0}'.format(partner):average_incoming_length,
      'word ratio': average_incoming_length/(average_outgoing_length+0.00001),'Total Text': send_by_him+send_by_me, 
-     'Initiator':initiator , 'Ender':ender , 'initiate with new topic':new_topic, 'Attachment_partner':attachment_number_him,'Attachment_me':attachment_number_her, 'Topic': topic_summary, 
-     'Emoji_partner':emoji_count_him, 'Emoji_me':emoji_count_her, 'Response':sentiment, \
-     'adjust_word_ratio': adjusted_words_ratio,'total_minutes_partner':him_total_seconds/60, 'total_minutes_me': me_total_seconds/60, \
-     'hours_in_touch_partner':him_hours_in_touch, 'hours_in_tough_me': me_hours_in_touch, 'gnat_abs':gnat_abs, 'gnat_perctg': gnat_percentage, \
-     'response_time_partner':him_response_time, 'reponse_time_me': me_response_time, 'valid word count by me':average_valid_outgoing_length, \
-     'valid word count by partner':average_valid_incoming_length, 'valid word ratio': average_valid_incoming_length/(average_valid_outgoing_length+0.00001)}, ignore_index=True)
+     'Initiator':initiator , 'Ender':ender , 'initiate with new topic':new_topic, 'Attachment_{0}'.format(partner):attachment_number_him,'Attachment_me':attachment_number_her, 'Topic': topic_summary, 
+     'Emoji_{0}'.format(partner):emoji_count_him, 'Emoji_me':emoji_count_her, 'Response':sentiment, \
+     'adjust_word_ratio': adjusted_words_ratio,'total_minutes_{0}'.format(partner):him_total_seconds/60, 'total_minutes_me': me_total_seconds/60, \
+     'hours_in_touch_{0}'.format(partner):him_hours_in_touch, 'hours_in_tough_me': me_hours_in_touch, 'gnat_abs':gnat_abs, 'gnat_perctg': gnat_percentage, \
+     'response_time_{0}'.format(partner):him_response_time, 'reponse_time_me': me_response_time, 'valid word count by me':average_valid_outgoing_length, \
+     'valid word count by {0}'.format(partner):average_valid_incoming_length, 'valid word ratio': average_valid_incoming_length/(average_valid_outgoing_length+0.00001)}, ignore_index=True)
     
     return pd_master
 
@@ -278,10 +278,10 @@ def generate_master_summary(pd_text):
     
     #special keywords
     custom_stopwords=identify_custom_stopwords(list_of_entire_text)
-    pd_master=pd.DataFrame(columns=['Date', 'Start Time', 'End Time', 'Text sent by Me', 'Text Sent by partner', 'raw ratio', 'adjusted text ratio','word count by me', 'word count by partner', 'word ratio', 'Total Text', 'Initiator', 'Ender',
-                                    'initiate with new topic', 'Emoji_partner','Emoji_me', 'Attachment_partner','Attachment_me', 'Topic', 'Response',\
-                                    'adjust_word_ratio', 'total_minutes_partner', 'total_minutes_me', 'hours_in_touch_partner', 'hours_in_tough_me', 'gnat_abs', \
-                                    'gnat_perctg', 'response_time_partner', 'reponse_time_me', 'valid word count by me', 'valid word count by partner', 'valid word ratio',])
+    pd_master=pd.DataFrame(columns=['Date', 'Start Time', 'End Time', 'Text sent by Me', 'Text Sent by {0}'.format(partner), 'raw ratio', 'adjusted text ratio','word count by me', 'word count by {0}'.format(partner), 'word ratio', 'Total Text', 'Initiator', 'Ender',
+                                    'initiate with new topic', 'Emoji_{0}'.format(partner),'Emoji_me', 'Attachment_{0}'.format(partner),'Attachment_me', 'Topic', 'Response',\
+                                    'adjust_word_ratio', 'total_minutes_{0}'.format(partner), 'total_minutes_me', 'hours_in_touch_{0}'.format(partner), 'hours_in_tough_me', 'gnat_abs', \
+                                    'gnat_perctg', 'response_time_{0}'.format(partner), 'reponse_time_me', 'valid word count by me', 'valid word count by {0}'.format(partner), 'valid word ratio',])
 
     for index_date in range(0, len(all_dates)):
         print ("analysing day ", index_date)
@@ -304,7 +304,7 @@ def generate_master_summary(pd_text):
 
 
 
-def summary_analytical(pd_text, pd_master,file_name,nr_outgoing_again_Index,nr_incoming_again_Index, guy_initiation_index,girl_initiation_index):
+def summary_analytical(pd_text, pd_master,file_name,nr_outgoing_again_Index,nr_incoming_again_Index, guy_initiation_index,girl_initiation_index , partner):
     all_figure=[]
     file_name=file_name+".pdf"
     pdf = matplotlib.backends.backend_pdf.PdfPages(file_name)
@@ -317,14 +317,14 @@ def summary_analytical(pd_text, pd_master,file_name,nr_outgoing_again_Index,nr_i
     pd_master.loc[pd_master['valid word count by me']==0,'valid word count by me']=1 
     pd_master.loc[pd_master['word count by me']==0,'word count by me']=1 
 
-    pd_master['valid_word_rolling_ratio']=pd_master['valid word count by partner']/pd_master['valid word count by me']
+    pd_master['valid_word_rolling_ratio']=pd_master['valid word count by {0}'.format(partner)]/pd_master['valid word count by me']
     pd_master['valid_word_rolling_ratio']=pd_master['valid_word_rolling_ratio'].rolling(7).median()    
-    pd_master['word_rolling_ratio']=pd_master['word count by partner']/pd_master['word count by me']
+    pd_master['word_rolling_ratio']=pd_master['word count by {0}'.format(partner)]/pd_master['word count by me']
     pd_master['word_rolling_ratio']=pd_master['word_rolling_ratio'].rolling(7).median()    
 
     fig2, axs = plt.subplots(2,sharex=True, squeeze=True)
     axs[0].plot(pd_master['Date'], pd_master['word count by me'].rolling(7).mean(), '-r', label='me')
-    axs[0].plot(pd_master['Date'], pd_master['word count by partner'].rolling(7).mean(),'-b', label='partner')
+    axs[0].plot(pd_master['Date'], pd_master['word count by {0}'.format(partner)].rolling(7).mean(),'-b', label='{0}'.format(partner))
     leg = axs[0].legend();
     axs[0].set_title('Avg words by partner vs Avg words by me')
     axs[1].plot(pd_master['Date'], pd_master['word_rolling_ratio'],'-r', label='normal ratio')
@@ -336,17 +336,17 @@ def summary_analytical(pd_text, pd_master,file_name,nr_outgoing_again_Index,nr_i
     
     #2b hours
     pd_master.loc[pd_master['total_minutes_me']==0,'total_minutes_me']=1 
-    pd_master['minutes_ratio']=pd_master['total_minutes_partner']/pd_master['total_minutes_me']
+    pd_master['minutes_ratio']=pd_master['total_minutes_{0}'.format(partner)]/pd_master['total_minutes_me']
     pd_master['minutes_ratio']=pd_master['minutes_ratio'].rolling(7).median()
     pd_master.loc[pd_master['minutes_ratio']==0, 'minutes_ratio']=1
     
 
     #2c hours in talk
-    pd_master['hours_in_touch_ratio']=pd_master['hours_in_touch_partner']/(pd_master['hours_in_tough_me'])
+    pd_master['hours_in_touch_ratio']=pd_master['hours_in_touch_{0}'.format(partner)]/(pd_master['hours_in_tough_me'])
     pd_master['hours_in_touch_ratio']=pd_master['hours_in_touch_ratio'].rolling(7).mean()
     fig2c, axs = plt.subplots(2,sharex=True, squeeze=True)
     axs[0].plot(pd_master['Date'], pd_master['hours_in_tough_me'].rolling(7).mean(), '-r', label='me')
-    axs[0].plot(pd_master['Date'], pd_master['hours_in_touch_partner'].rolling(7).mean(),'-b', label='partner')
+    axs[0].plot(pd_master['Date'], pd_master['hours_in_touch_{0}'.format(partner)].rolling(7).mean(),'-b', label='{0}'.format(partner))
     leg = axs[0].legend();
     axs[0].set_title('Hour points partner sends message vs hour points me send message')
     axs[1].plot(pd_master['Date'], pd_master['hours_in_touch_ratio'])
@@ -376,10 +376,10 @@ def summary_analytical(pd_text, pd_master,file_name,nr_outgoing_again_Index,nr_i
     fig3, axs = plt.subplots(2, 2)
     #axs.set_title('Breakdown of initiation type (rolling 7d)')
     axs[0, 0].plot(initition_summary.index, initition_summary.INCOM.rolling(7).sum())
-    axs[0, 0].set_title('New Initiation from Partner')
+    axs[0, 0].set_title('New Initiation from {0}'.format(partner))
     axs[0, 0].xaxis.set_visible(False)
     axs[0, 1].plot(initition_summary.index, initition_summary.NR_INCOM.rolling(7).sum(), 'tab:orange')
-    axs[0, 1].set_title('Second Initiation from Partner')
+    axs[0, 1].set_title('Second Initiation from {0}'.format(partner))
     axs[0, 1].xaxis.set_visible(False)
     axs[1, 0].plot(initition_summary.index, initition_summary.OUTGO.rolling(7).sum(), 'tab:green')
     axs[1, 0].set_title('New Initiation from Me')
@@ -410,7 +410,7 @@ def summary_analytical(pd_text, pd_master,file_name,nr_outgoing_again_Index,nr_i
     all_figure.append(fig8)
 
     #count emoji
-    pd_master['total_attachment_him']=pd_master['Emoji_partner']+pd_master['Attachment_partner']
+    pd_master['total_attachment_him']=pd_master['Emoji_{0}'.format(partner)]+pd_master['Attachment_{0}'.format(partner)]
     pd_master['total_attachment_her']=pd_master['Emoji_me']+pd_master['Attachment_me']
     pd_master['total_attachment_him_average']=pd_master['total_attachment_him'].rolling(7).sum()
     pd_master['total_attachment_her_average']=pd_master['total_attachment_her'].rolling(7).sum()
@@ -421,7 +421,7 @@ def summary_analytical(pd_text, pd_master,file_name,nr_outgoing_again_Index,nr_i
 
     fig4c, axs = plt.subplots(2,sharex=True, squeeze=True)
     axs[0].plot(pd_master['Date'], pd_master['total_attachment_her_average'], '-r', label='me')
-    axs[0].plot(pd_master['Date'], pd_master['total_attachment_him_average'],'-b', label='partner')
+    axs[0].plot(pd_master['Date'], pd_master['total_attachment_him_average'],'-b', label='{0}'.format(partner))
     leg = axs[0].legend();
     axs[0].set_title('No. of Multimedia Sent by Partner vs by Me')
     axs[1].plot(pd_master['Date'], pd_master['mms_ratio'])
@@ -477,6 +477,8 @@ def stats_collections(direct_process=True):
         
     print ("finish processing")
     original_file_name=file_name
+	
+	partner = "Sambar"
     
     pd_text=raw_data[['Message Date', 'Type','Text']]
     pd_master, nr_outgoing_again_Index,nr_incoming_again_Index, guy_initiation_index,girl_initiation_index=\
@@ -498,7 +500,7 @@ def stats_collections(direct_process=True):
     
     file_name=file_name.replace('.csv', '')
     file_name="new_"+file_name
-    summary_analytical(pd_text, pd_master,file_name, nr_outgoing_again_Index,nr_incoming_again_Index, guy_initiation_index,girl_initiation_index)
+    summary_analytical(pd_text, pd_master,file_name, nr_outgoing_again_Index,nr_incoming_again_Index, guy_initiation_index,girl_initiation_index,'Sambar')
     
 if __name__ == "__main__":
     stats_collections()
