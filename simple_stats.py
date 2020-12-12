@@ -27,6 +27,8 @@ import matplotlib.backends.backend_pdf
 from holy_grail import add_block_conv, holy_grail_analysis
 from preprocessing_script import master_preprocessing_script
 
+partner = ""
+
 def time_conversion(x):
     temp_date=datetime.strptime(x, '%Y-%m-%d %H:%M:%S').timestamp()
     return temp_date
@@ -473,12 +475,13 @@ def stats_collections(direct_process=True):
 
     file_name = input("Enter your whatapp chat filename (ending in txt): ")
     outgoing_name = input("Please enter your whatsapp name: ")
+	partner = input("Your partner name")
     raw_data= master_preprocessing_script(file_name, outgoing_name)
         
     print ("finish processing")
     original_file_name=file_name
 	
-	partner = "Sambar"
+	
     
     pd_text=raw_data[['Message Date', 'Type','Text']]
     pd_master, nr_outgoing_again_Index,nr_incoming_again_Index, guy_initiation_index,girl_initiation_index=\
@@ -500,7 +503,7 @@ def stats_collections(direct_process=True):
     
     file_name=file_name.replace('.csv', '')
     file_name="new_"+file_name
-    summary_analytical(pd_text, pd_master,file_name, nr_outgoing_again_Index,nr_incoming_again_Index, guy_initiation_index,girl_initiation_index,'Sambar')
+    summary_analytical(pd_text, pd_master,file_name, nr_outgoing_again_Index,nr_incoming_again_Index, guy_initiation_index,girl_initiation_index,partner)
     
 if __name__ == "__main__":
     stats_collections()
